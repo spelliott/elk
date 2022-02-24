@@ -29,7 +29,11 @@
             {{ range $e := $n.Edges -}}
                 if d.{{ $e.StructField }} != nil {
                     {{ if $e.Unique -}}
-                        b.{{ $e.MutationSet }}(*d.{{ $e.StructField }})
+                        if *d.{{ $e.StructField }} == 0 {
+                            b.{{ $e.MutationClear }}()
+                        } else {
+                            b.{{ $e.MutationSet }}(*d.{{ $e.StructField }})
+                        }
                     {{ else -}}
                         b.{{ $e.MutationClear }}().{{ $e.MutationAdd }}(d.{{ $e.StructField }}...)
                     {{- end }}
